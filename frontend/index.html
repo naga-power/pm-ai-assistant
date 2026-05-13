@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>開発PM AI支援システム</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-robot"></i>
+                <h1>PM AI支援</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="chat">
+                    <i class="fas fa-comments"></i>
+                    <span>AIチャット</span>
+                </li>
+                <li class="nav-item" data-section="report">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>レポート生成</span>
+                </li>
+                <li class="nav-item" data-section="risk">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>リスク分析</span>
+                </li>
+                <li class="nav-item" data-section="minutes">
+                    <i class="fas fa-file-alt"></i>
+                    <span>議事録作成</span>
+                </li>
+                <li class="nav-item" data-section="task">
+                    <i class="fas fa-tasks"></i>
+                    <span>タスク分解</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="version-info">PoC v0.1.0</div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Section -->
+            <section id="section-chat" class="section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> PM AIチャットアシスタント</h2>
+                    <p class="section-desc">開発プロジェクト管理に関する質問や相談ができます</p>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                            <div class="message-content">
+                                <p>こんにちは！開発PM AIアシスタントです。プロジェクト管理に関するご質問やご相談をお気軽にどうぞ。</p>
+                                <p>例えば：</p>
+                                <ul>
+                                    <li>スプリント計画の立て方を教えて</li>
+                                    <li>ステークホルダーへの報告のコツは？</li>
+                                    <li>遅延しているプロジェクトの立て直し方</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <textarea id="chatInput" placeholder="メッセージを入力..." rows="1"></textarea>
+                        <button id="chatSend" class="btn-send" title="送信">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Report Section -->
+            <section id="section-report" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> プロジェクトステータスレポート生成</h2>
+                    <p class="section-desc">プロジェクト情報を入力すると、構造化されたステータスレポートを自動生成します</p>
+                </div>
+                <div class="form-result-layout">
+                    <div class="form-panel">
+                        <form id="reportForm">
+                            <div class="form-group">
+                                <label for="reportProjectName">プロジェクト名 <span class="required">*</span></label>
+                                <input type="text" id="reportProjectName" placeholder="例: ECサイトリニューアル" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportProgress">全体進捗（%） <span class="required">*</span></label>
+                                <div class="progress-input">
+                                    <input type="range" id="reportProgress" min="0" max="100" value="50">
+                                    <span id="progressValue">50%</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportMilestones">主要マイルストーン <span class="required">*</span></label>
+                                <textarea id="reportMilestones" rows="3" placeholder="例:&#10;・基本設計完了（5/10 完了）&#10;・詳細設計完了（5/25 進行中）&#10;・開発フェーズ1完了（6/15 未着手）" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportAchievements">今週の成果 <span class="required">*</span></label>
+                                <textarea id="reportAchievements" rows="3" placeholder="例: API設計のレビュー完了、DB設計書v2作成" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportIssues">課題・リスク <span class="required">*</span></label>
+                                <textarea id="reportIssues" rows="3" placeholder="例: フロントエンド開発者の退職により人員不足" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportNextPlan">来週の計画 <span class="required">*</span></label>
+                                <textarea id="reportNextPlan" rows="3" placeholder="例: 詳細設計レビュー、フロント開発開始" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportAdditional">補足情報（任意）</label>
+                                <textarea id="reportAdditional" rows="2" placeholder="その他共有事項があれば"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-magic"></i> レポートを生成
+                            </button>
+                        </form>
+                    </div>
+                    <div class="result-panel" id="reportResult">
+                        <div class="result-placeholder">
+                            <i class="fas fa-file-alt"></i>
+                            <p>左のフォームに入力してレポートを生成してください</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risk Section -->
+            <section id="section-risk" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> リスク分析</h2>
+                    <p class="section-desc">プロジェクト状況からリスクを特定し、対策を提案します</p>
+                </div>
+                <div class="form-result-layout">
+                    <div class="form-panel">
+                        <form id="riskForm">
+                            <div class="form-group">
+                                <label for="riskDescription">プロジェクト概要 <span class="required">*</span></label>
+                                <textarea id="riskDescription" rows="4" placeholder="例: BtoB向けSaaSプラットフォームの新規開発。マイクロサービスアーキテクチャを採用し、React + Go + PostgreSQLで構築。" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="riskStatus">現在の状況 <span class="required">*</span></label>
+                                <textarea id="riskStatus" rows="4" placeholder="例: 開発フェーズ2の中盤。主要機能の50%が実装完了。テスト環境の構築が遅れている。" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="riskTeam">チーム情報（任意）</label>
+                                <textarea id="riskTeam" rows="2" placeholder="例: 開発者5名、QA2名、PM1名。シニアエンジニア1名が来月退職予定。"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="riskDeadline">納期情報（任意）</label>
+                                <textarea id="riskDeadline" rows="2" placeholder="例: 2025年3月末リリース予定。顧客との契約上、延期不可。"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="riskContext">追加コンテキスト（任意）</label>
+                                <textarea id="riskContext" rows="2" placeholder="その他の懸念事項や背景情報"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-search"></i> リスクを分析
+                            </button>
+                        </form>
+                    </div>
+                    <div class="result-panel" id="riskResult">
+                        <div class="result-placeholder">
+                            <i class="fas fa-shield-alt"></i>
+                            <p>プロジェクト情報を入力してリスク分析を実行してください</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Minutes Section -->
+            <section id="section-minutes" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-alt"></i> 会議議事録作成</h2>
+                    <p class="section-desc">会議メモから構造化された議事録を自動生成します</p>
+                </div>
+                <div class="form-result-layout">
+                    <div class="form-panel">
+                        <form id="minutesForm">
+                            <div class="form-group">
+                                <label for="minutesInfo">会議情報（任意）</label>
+                                <textarea id="minutesInfo" rows="2" placeholder="例: 2025/1/15 14:00-15:00 週次定例 参加者: 田中、佐藤、鈴木"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="minutesNotes">会議メモ <span class="required">*</span></label>
+                                <textarea id="minutesNotes" rows="12" placeholder="会議中のメモやノートをそのまま貼り付けてください。&#10;&#10;例:&#10;・進捗確認 → API開発は予定通り、フロントは1日遅れ&#10;・田中さんからDBのパフォーマンス問題の報告&#10;  → インデックス追加で対応、佐藤さんが今週中に対応&#10;・来週のリリースについて&#10;  → ステージング環境での最終テスト必要&#10;  → 鈴木さんがテストシナリオ作成&#10;・次回は来週火曜14時" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-pen-fancy"></i> 議事録を生成
+                            </button>
+                        </form>
+                    </div>
+                    <div class="result-panel" id="minutesResult">
+                        <div class="result-placeholder">
+                            <i class="fas fa-clipboard"></i>
+                            <p>会議メモを入力して議事録を生成してください</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task Breakdown Section -->
+            <section id="section-task" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tasks"></i> タスク分解支援</h2>
+                    <p class="section-desc">大きなタスクや機能要件を具体的なサブタスクに分解します</p>
+                </div>
+                <div class="form-result-layout">
+                    <div class="form-panel">
+                        <form id="taskForm">
+                            <div class="form-group">
+                                <label for="taskDescription">タスク / 機能要件 <span class="required">*</span></label>
+                                <textarea id="taskDescription" rows="6" placeholder="例: ユーザー認証機能の実装。メールアドレスとパスワードによるログイン、ソーシャルログイン（Google, GitHub）、パスワードリセット、二要素認証を含む。" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskContext">背景・コンテキスト（任意）</label>
+                                <textarea id="taskContext" rows="3" placeholder="例: Next.js + Supabaseで構築中のWebアプリ。現在はモック認証で動作。"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskConstraints">制約条件（任意）</label>
+                                <textarea id="taskConstraints" rows="3" placeholder="例: 開発期間2週間、担当者2名（フロント1名、バックエンド1名）"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-project-diagram"></i> タスクを分解
+                            </button>
+                        </form>
+                    </div>
+                    <div class="result-panel" id="taskResult">
+                        <div class="result-placeholder">
+                            <i class="fas fa-sitemap"></i>
+                            <p>タスクを入力して分解を実行してください</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
